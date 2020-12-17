@@ -1,0 +1,63 @@
+plugins {
+    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("io.micronaut.application") version "1.2.0"
+}
+
+version = "0.1"
+group = "com.example"
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+micronaut {
+    runtime("netty")
+    testRuntime("junit5")
+    processing {
+        incremental(false)
+        annotations("com.example.*")
+    }
+}
+
+dependencies {
+    annotationProcessor("io.micronaut.openapi:micronaut-openapi:2.3.0")
+    implementation("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut.security:micronaut-security-jwt")
+    implementation("io.swagger.core.v3:swagger-annotations")
+    implementation("io.micronaut:micronaut-validation")
+    implementation("io.micronaut:micronaut-runtime")
+    implementation("javax.annotation:javax.annotation-api")
+    implementation("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut.mongodb:micronaut-mongo-reactive")
+    implementation("io.micronaut.rabbitmq:micronaut-rabbitmq")
+    runtimeOnly("ch.qos.logback:logback-classic")
+    testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.0.1")
+}
+
+
+application {
+    mainClass.set("com.example.Application")
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("15")
+    targetCompatibility = JavaVersion.toVersion("15")
+}
+
+tasks.withType(JavaCompile).all {
+    options.fork = true
+    options.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=rapidoc.enabled=true,swagger-ui.enabled=true,swagger-ui.theme=flattop'
+
+    options.compilerArgs += ['--enable-preview']
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs += '--enable-preview'
+}
+
+tasks {
+
+
+}
+
